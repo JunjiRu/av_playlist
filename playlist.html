@@ -1,0 +1,57 @@
+<html>
+<head>
+  <style type="text/css">
+    body {background:black;}
+    .control_button {position:relative; z-index:999;}
+    .half {width:50%;}
+    .full {position:absolute; top:0; width:100%; height:100%;}
+  </style>
+  <script type="text/javascript">
+    window.addEventListener('DOMContentLoaded', function(){
+       videoElement = document.querySelector("video");
+       
+       var video = document.getElementById('video');
+	    video.addEventListener('ended',function() {
+		    video.classList.remove('full');
+	    });
+    });
+	 function play(){
+	    var video = document.getElementById('video');
+		video.classList.add('full');
+        video.play();
+	}
+	 function pause(){
+	    var video = document.getElementById('video');
+	    video.classList.remove('full');
+        video.pause();
+	}
+    function changeSpeed(num){
+        videoElement.playbackRate = num;
+    }
+  </script>
+</head>
+<body>
+  <button class="control_button" onClick="play();">play</button>
+  <button class="control_button" onClick="pause();">pause</button><br>
+  
+  <button onClick="changeSpeed(0.3);">0.3倍</button>
+  <button onClick="changeSpeed(0.4);">0.4倍</button>
+  <button onClick="changeSpeed(0.5);">0.5倍</button>
+  <button onClick="changeSpeed(0.6);">0.6倍</button>
+  <button onClick="changeSpeed(0.7);">0.7倍</button>
+  <button onClick="changeSpeed(0.75);">0.75倍</button>
+  <button onClick="changeSpeed(0.8);">0.8倍</button>
+  <button onClick="changeSpeed(0.85);">0.85倍</button>
+  <button onClick="changeSpeed(0.9);">0.9倍</button>
+  <button onClick="changeSpeed(0.95);">0.95倍</button>
+  <button onClick="changeSpeed(1);">1倍</button><br>
+  
+  <button onClick="videoElement.src = './filepath.mov';">song_name</button>
+  <button onClick="videoElement.src = './filepath2\'s .mov';">What's this? can't use `?` in filename...</button>
+  <button onClick="videoElement.src = '../日本語/曲名.mp3';">曲名 mp3 ok</button>
+  <button onClick="videoElement.src = '../日本語/曲名.mp4';">曲名 mp4 ok</button><br><br>
+  
+  <video id='video' class="half" type="video/webm" src="../default/default_song.mp3" controls></video>
+  
+</body>
+</html>
