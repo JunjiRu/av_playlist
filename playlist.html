@@ -5,28 +5,48 @@
     .control_button {position:relative; z-index:999;}
     .half {width:50%;}
     .full {position:absolute; top:0; width:100%; height:100%;}
+    .selected {background:green;color:white;}
   </style>
   <script type="text/javascript">
+ 
     window.addEventListener('DOMContentLoaded', function(){
        videoElement = document.querySelector("video");
-       
-       var video = document.getElementById('video');
-	    video.addEventListener('ended',function() {
+       video = document.getElementById('video');
+       curSpeed = 1;
+       curSong = 1;
+ 
+	   video.addEventListener('ended',function() {
 		    video.classList.remove('full');
-	    });
+	   });
+	   changeSpeed(curSpeed);
+	   changeSong(curSong, "filepath.mp3");
     });
+
 	 function play(){
-	    var video = document.getElementById('video');
-		video.classList.add('full');
+        video.classList.add('full');
         video.play();
 	}
 	 function pause(){
-	    var video = document.getElementById('video');
 	    video.classList.remove('full');
         video.pause();
 	}
     function changeSpeed(num){
         videoElement.playbackRate = num;
+        var cur_selected_id = document.getElementById('but_sp_'+curSpeed);
+        cur_selected_id.classList.remove('selected');
+        var new_selected_id = document.getElementById('but_sp_'+num);
+        new_selected_id.classList.add('selected');
+        curSpeed = num;
+    }
+    function changeSong(num, path, volume=0.2){
+        videoElement.src = path;
+        var cur_selected_id = document.getElementById('song_'+curSong);
+        cur_selected_id.classList.remove('selected');
+        var new_selected_id = document.getElementById('song_'+num);
+        new_selected_id.classList.add('selected');
+        curSong = num;
+        changeSpeed(curSpeed);
+        videoElement.volume = volume;
     }
   </script>
 </head>
@@ -34,24 +54,22 @@
   <button class="control_button" onClick="play();">play</button>
   <button class="control_button" onClick="pause();">pause</button><br>
   
-  <button onClick="changeSpeed(0.3);">0.3倍</button>
-  <button onClick="changeSpeed(0.4);">0.4倍</button>
-  <button onClick="changeSpeed(0.5);">0.5倍</button>
-  <button onClick="changeSpeed(0.6);">0.6倍</button>
-  <button onClick="changeSpeed(0.7);">0.7倍</button>
-  <button onClick="changeSpeed(0.75);">0.75倍</button>
-  <button onClick="changeSpeed(0.8);">0.8倍</button>
-  <button onClick="changeSpeed(0.85);">0.85倍</button>
-  <button onClick="changeSpeed(0.9);">0.9倍</button>
-  <button onClick="changeSpeed(0.95);">0.95倍</button>
-  <button onClick="changeSpeed(1);">1倍</button><br>
+  <button id="but_sp_0.3" onClick="changeSpeed(0.3);">0.3倍</button>
+  <button id="but_sp_0.4" onClick="changeSpeed(0.4);">0.4倍</button>
+  <button id="but_sp_0.5" onClick="changeSpeed(0.5);">0.5倍</button>
+  <button id="but_sp_0.6" onClick="changeSpeed(0.6);">0.6倍</button>
+  <button id="but_sp_0.7" onClick="changeSpeed(0.7);">0.7倍</button>
+  <button id="but_sp_0.75" onClick="changeSpeed(0.75);">0.75倍</button>
+  <button id="but_sp_0.8" onClick="changeSpeed(0.8);">0.8倍</button>
+  <button id="but_sp_0.85" onClick="changeSpeed(0.85);">0.85倍</button>
+  <button id="but_sp_0.9" onClick="changeSpeed(0.9);">0.9倍</button>
+  <button id="but_sp_0.95" onClick="changeSpeed(0.95);">0.95倍</button>
+  <button id="but_sp_1" onClick="changeSpeed(1);">1倍</button><br>
+
+  <button id="song_1" onClick="changeSong(1, './filepath1.mov', 0.13);">songname1</button>
+  <button id="song_2" onClick="changeSong(2, './filepath2.mov', 0.1);">songname2</button><br><br>
   
-  <button onClick="videoElement.src = './filepath.mov';">song_name</button>
-  <button onClick="videoElement.src = './filepath2\'s .mov';">What's this? can't use `?` in filename...</button>
-  <button onClick="videoElement.src = '../日本語/曲名.mp3';">曲名 mp3 ok</button>
-  <button onClick="videoElement.src = '../日本語/曲名.mp4';">曲名 mp4 ok</button><br><br>
-  
-  <video id='video' class="half" type="video/webm" src="../default/default_song.mp3" controls></video>
+  <video id='video' class="half" type="video/webm" src="../filepath3.mp3" controls></video>
   
 </body>
 </html>
