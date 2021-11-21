@@ -8,28 +8,64 @@
     .selected {background:green;color:white;}
   </style>
   <script type="text/javascript">
- 
     window.addEventListener('DOMContentLoaded', function(){
-       videoElement = document.querySelector("video");
-       video = document.getElementById('video');
-       curSpeed = 1;
-       curSong = 1;
- 
-	   video.addEventListener('ended',function() {
-		    video.classList.remove('full');
-	   });
-	   changeSpeed(curSpeed);
-	   changeSong(curSong, "filepath.mp3");
+        // generate speed buttons
+        let speeds = [0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.1, 1.25, 1.5, 1.75, 2];
+        speedHtml = "";
+        // <button id="but_sp_N" onClick="changeSpeed(N);">x N</button>
+        speeds.forEach(function(speed, index, array) {
+            speedHtml = speedHtml +
+                "<button id=\"but_sp_" + speed + "\" onClick=\"changeSpeed(" + speed + ");\">x "+ speed + "</button>";
+        });
+        let speedArea = document.getElementById("speed_area");
+        speedArea.innerHTML = speedHtml;
+
+        // generate song buttons
+        let songs = [];
+        // songs.push(['filepath', 'button text', default speed(float), default flag]);
+        // need to escape ' -> \\'
+        songs.push(["./窓を開けて_vo有り.mov", "窓を開けて", 0.13]);
+        songs.push(["./RollingThunder.mov", "Rolling Thunder", 0.25]);
+        songs.push(["./Shiny Stellar_tux.mov", "Shiny Stellar(tux)", 0.33]);
+        songs.push(["./Shiny Stellar_pdf.mov", "Shiny Stellar(pdf)", 0.15]);
+        songs.push(["./What's this_5st.mov", "What's this?", 0.15]);
+        songs.push(["../原曲/不完全パズル.mp3", "不完全パズル", 0.2, true]);
+        songs.push(["../原曲/メルト.mp4", "メルト", 0.35]);
+
+        // <button id="song_N" onClick="changeSong(N, 'filepath', speed);">butto text</button>
+        songHtml = "";
+        defaultSong = [];
+        songs.forEach(function(song, index, array) {
+            songHtml = songHtml +
+                "<button id=\"song_" + index +  "\" " +
+                "onClick=\"changeSong(" + index + ", '" + song[0].replace(/'/g, "\\'") + "', " + song[2] + ");\">" + song[1] +
+                "</button>"
+            if( song[3] ){
+                defaultSong = index;
+            }
+        });
+        let songArea = document.getElementById("song_area");
+        songArea.innerHTML = songHtml;
+
+        videoElement = document.querySelector("video");
+        video = document.getElementById('video');
+        curSpeed = 1;
+        curSong = defaultSong;
+	    video.addEventListener('ended',function() {
+            video.classList.remove('full');
+	    });
+	    changeSpeed(curSpeed);
+	    changeSong(curSong, songs[curSong][0], songs[curSong][2]);
     });
 
-	 function play(){
+    function play(){
         video.classList.add('full');
         video.play();
 	}
-	 function pause(){
-	    video.classList.remove('full');
+    function pause(){
+        video.classList.remove('full');
         video.pause();
-	}
+    }
     function changeSpeed(num){
         videoElement.playbackRate = num;
         var cur_selected_id = document.getElementById('but_sp_'+curSpeed);
@@ -38,7 +74,7 @@
         new_selected_id.classList.add('selected');
         curSpeed = num;
     }
-    function changeSong(num, path, volume=0.2){
+    function changeSong(num, path, volume){
         videoElement.src = path;
         var cur_selected_id = document.getElementById('song_'+curSong);
         cur_selected_id.classList.remove('selected');
@@ -54,22 +90,9 @@
   <button class="control_button" onClick="play();">play</button>
   <button class="control_button" onClick="pause();">pause</button><br>
   
-  <button id="but_sp_0.3" onClick="changeSpeed(0.3);">0.3倍</button>
-  <button id="but_sp_0.4" onClick="changeSpeed(0.4);">0.4倍</button>
-  <button id="but_sp_0.5" onClick="changeSpeed(0.5);">0.5倍</button>
-  <button id="but_sp_0.6" onClick="changeSpeed(0.6);">0.6倍</button>
-  <button id="but_sp_0.7" onClick="changeSpeed(0.7);">0.7倍</button>
-  <button id="but_sp_0.75" onClick="changeSpeed(0.75);">0.75倍</button>
-  <button id="but_sp_0.8" onClick="changeSpeed(0.8);">0.8倍</button>
-  <button id="but_sp_0.85" onClick="changeSpeed(0.85);">0.85倍</button>
-  <button id="but_sp_0.9" onClick="changeSpeed(0.9);">0.9倍</button>
-  <button id="but_sp_0.95" onClick="changeSpeed(0.95);">0.95倍</button>
-  <button id="but_sp_1" onClick="changeSpeed(1);">1倍</button><br>
+  <div id="speed_area"></div>
+  <div id="song_area"></div>
+  <video id='video' class="half" type="video/webm" src="" controls></video>
 
-  <button id="song_1" onClick="changeSong(1, './filepath1.mov', 0.13);">songname1</button>
-  <button id="song_2" onClick="changeSong(2, './filepath2.mov', 0.1);">songname2</button><br><br>
-  
-  <video id='video' class="half" type="video/webm" src="../filepath3.mp3" controls></video>
-  
 </body>
 </html>
