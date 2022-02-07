@@ -39,7 +39,10 @@
             songHtml = songHtml +
                 "<button id=\"song_" + index +  "\" " +
                 "onClick=\"changeSong(" + index + ", '" + song[0].replace(/'/g, "\\'") + "', " + song[2] + ");\">" + song[1] +
-                "</button>"
+                "</button>";
+            if( (index+1)%7 == 0 ){
+                songHtml = songHtml + "<br>";
+            }
             if( song[3] ){
                 defaultSong = index;
             }
