@@ -120,6 +120,7 @@
         }
         if(start < end){
             video.src = originalVideoSrc+"#t="+start.toString()+","+end.toString();
+            changeSpeed(curSpeed);	
         }
     }
     function clearTime(){
