@@ -3,6 +3,9 @@
   <style type="text/css">
     body {background:black;}
     .control_button {position:relative; z-index:999;}
+    .play_time, .loop_state {color: white;font-size:13px;}
+    .loop_state {margin-right:30px}
+    .play_time>input {width:25px;}
     .half {width:50%;}
     .full {position:absolute; top:0; width:100%; height:100%;}
     .selected {background:green;color:white;}
@@ -52,6 +55,7 @@
 
         videoElement = document.querySelector("video");
         video = document.getElementById('video');
+        originalVideoSrc = '';
         curSpeed = 1;
         curSong = defaultSong;
 	    video.addEventListener('ended',function() {
@@ -59,15 +63,71 @@
 	    });
 	    changeSpeed(curSpeed);
 	    changeSong(curSong, songs[curSong][0], songs[curSong][2]);
-    });
 
+        // loop controll
+        lastClickTime = Date.now();
+	    video.addEventListener("pause", function() {
+            var state = video.getAttribute('loop');
+            var diff = Date.now() - lastClickTime;
+            // if screen was clicked in 0.3sec, shall be deemed intentionally controll
+            if(state && diff > 300){
+                video.src = video.src;
+                video.play();
+            }
+        });
+    });
+    function updateClickTime(){
+        // ☠️when the play/stop button on CONTROLS is clicked; cannot cactch event...
+        lastClickTime = Date.now();
+    }
     function play(){
         video.classList.add('full');
+        setPlayDuration();
         video.play();
 	}
     function pause(){
         video.classList.remove('full');
         video.pause();
+    }
+    function loopChange(reset){
+        var el = document.getElementById('loop_state');
+        var state = video.getAttribute('loop');
+        if(state || reset){
+            video.removeAttribute('loop');
+            el.innerHTML = "OFF";
+        }else{
+            video.setAttribute('loop', true);
+            el.innerHTML = "ON";
+        }
+    }
+    function setPlayDuration(){
+        var start_min = parseInt(document.getElementById('start_min').value);
+        var start_sec = parseInt(document.getElementById('start_sec').value);
+        var end_min = parseInt(document.getElementById('end_min').value);
+        var end_sec = parseInt(document.getElementById('end_sec').value);
+        start = end = 0;
+        if(Number.isInteger(start_min)){
+            start += start_min*60;
+        }
+        if(Number.isInteger(end_min)){
+            end += end_min*60;
+        }
+        if(Number.isInteger(start_sec)){
+            start += start_sec;
+        }
+        if(Number.isInteger(end_sec)){
+            end += end_sec;
+        }
+        if(start < end){
+            video.src = originalVideoSrc+"#t="+start.toString()+","+end.toString();
+        }
+    }
+    function clearTime(){
+        var start_min = document.getElementById('start_min');
+        var start_sec = document.getElementById('start_sec');
+        var end_min = document.getElementById('end_min');
+        var end_sec = document.getElementById('end_sec');
+        start_min.value = start_sec.value = end_min.value = end_sec.value = '';
     }
     function changeSpeed(num){
         videoElement.playbackRate = num;
@@ -78,7 +138,7 @@
         curSpeed = num;
     }
     function changeSong(num, path, volume){
-        videoElement.src = path;
+        videoElement.src = originalVideoSrc = path;
         var cur_selected_id = document.getElementById('song_'+curSong);
         cur_selected_id.classList.remove('selected');
         var new_selected_id = document.getElementById('song_'+num);
@@ -86,13 +146,22 @@
         curSong = num;
         changeSpeed(curSpeed);
         videoElement.volume = volume;
+        loopChange(true);
     }
   </script>
 </head>
-<body>
+<body onClick="updateClickTime();">
   <button class="control_button" onClick="play();">play</button>
-  <button class="control_button" onClick="pause();">pause</button><br>
-  
+  <button class="control_button" onClick="pause();">pause</button>
+  <button class="control_button" onClick="loopChange(false);">loop</button>
+  <span class="control_button loop_state" id="loop_state">OFF</span>
+  <button class="control_button" onClick="clearTime();">clear time</button>
+  <span class="play_time">
+  start: <input id="start_min"></input>min <input id="start_sec"></input>sec /
+  end:  <input id="end_min"></input>min <input id="end_sec"></input>sec
+  </span>
+  <br>
+
   <div id="speed_area"></div>
   <div id="song_area"></div>
   <video id='video' class="half" type="video/webm" src="" controls></video>
