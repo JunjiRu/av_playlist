@@ -58,20 +58,21 @@
         originalVideoSrc = '';
         curSpeed = 1;
         curSong = defaultSong;
-	    video.addEventListener('ended',function() {
+        video.addEventListener('ended',function() {
             video.classList.remove('full');
-	    });
-	    changeSpeed(curSpeed);
-	    changeSong(curSong, songs[curSong][0], songs[curSong][2]);
+	});
+        changeSpeed(curSpeed);
+        changeSong(curSong, songs[curSong][0], songs[curSong][2]);
 
         // loop controll
         lastClickTime = Date.now();
-	    video.addEventListener("pause", function() {
+	video.addEventListener("pause", function() {
             var state = video.getAttribute('loop');
             var diff = Date.now() - lastClickTime;
             // if screen was clicked in 0.3sec, shall be deemed intentionally controll
             if(state && diff > 300){
                 video.src = video.src;
+                changeSpeed(curSpeed);
                 video.play();
             }
         });
@@ -84,7 +85,7 @@
         video.classList.add('full');
         setPlayDuration();
         video.play();
-	}
+    }
     function pause(){
         video.classList.remove('full');
         video.pause();
